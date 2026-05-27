@@ -5,17 +5,34 @@ import { NextRequest, NextResponse } from "next/server";
 export const POST = async (req: NextRequest) => {
   const { files }: { files: PRFile[] } = await req.json();
 
-  const diffContext = files
+  const MAX_PATCH_LINES = 50;
+  const MAX_FILES = 10;
+  const MAX_CHARS = 8000;
+
+  const truncatePatch = (patch: string) => {
+    const lines = patch.split("\n");
+    return lines.length <= MAX_PATCH_LINES
+      ? patch
+      : lines.slice(0, MAX_PATCH_LINES).join("\n") + "\n... (truncated)";
+  };
+
+  let diffContext = files
+    .filter((file) => file.patch)
+    .slice(0, MAX_FILES)
     .map(
       (file) => `
 File: ${file.filename}
 Status: ${file.status}
 Changes: +${file.additions} -${file.deletions}
 
-${file.patch ?? "Binary file or no patch available"}
-      `,
+${truncatePatch(file.patch!)}
+  `,
     )
     .join("\n---\n");
+
+  if (diffContext.length > MAX_CHARS) {
+    diffContext = diffContext.slice(0, MAX_CHARS) + "\n\n... (truncated)";
+  }
 
   const response = await groq.chat.completions.create({
     model: "llama-3.3-70b-versatile",
