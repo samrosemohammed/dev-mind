@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { PRProvider, TanstackQueryProvider } from "@/context/provider";
+import {
+  ChatProvider,
+  PRProvider,
+  TanstackQueryProvider,
+} from "@/context/provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 const geistSans = Geist({
@@ -32,7 +36,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <TanstackQueryProvider>
           <PRProvider>
-            <TooltipProvider>{children}</TooltipProvider>
+            <ChatProvider>
+              <TooltipProvider>{children}</TooltipProvider>
+            </ChatProvider>
           </PRProvider>
         </TanstackQueryProvider>
       </body>

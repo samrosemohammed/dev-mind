@@ -1,9 +1,17 @@
 "use client";
 
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useCallback,
+} from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PRFile } from "@/types/github";
+import { ChatMessage, ChatMode } from "@/types/chat";
+import { nanoid } from "nanoid";
 
 export const TanstackQueryProvider = ({
   children,
@@ -103,5 +111,111 @@ export const PRProvider = ({ children }: { children: ReactNode }) => {
 export const usePRContext = () => {
   const ctx = useContext(PRContext);
   if (!ctx) throw new Error("usePRContext must be used within PRProvider");
+  return ctx;
+};
+
+interface ChatContextType {
+  messages: ChatMessage[];
+  mode: ChatMode;
+  setMode: (m: ChatMode) => void;
+  isStreaming: boolean;
+  sendMessage: (content: string) => Promise<void>;
+  clearMessages: () => void;
+}
+
+const ChatContext = createContext<ChatContextType | null>(null);
+
+export const ChatProvider = ({ children }: { children: ReactNode }) => {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [mode, setMode] = useState<ChatMode>("ask");
+  const [isStreaming, setIsStreaming] = useState(false);
+  const { selectedFiles, submittedUrl } = usePRContext();
+
+  const sendMessage = useCallback(
+    async (content: string) => {
+      const userMsg: ChatMessage = {
+        id: nanoid(),
+        role: "user",
+        content,
+        createdAt: new Date(),
+      };
+      const assistantMsg: ChatMessage = {
+        id: nanoid(),
+        role: "assistant",
+        content: "",
+        createdAt: new Date(),
+      };
+
+      setMessages((prev) => [...prev, userMsg, assistantMsg]);
+      setIsStreaming(true);
+
+      try {
+        // Build history (exclude the empty assistant placeholder)
+        const history = [...messages, userMsg].map((m) => ({
+          role: m.role === "tool" ? "user" : m.role, // flatten tools for ask mode
+          content: m.content,
+        }));
+
+        const prMeta = parsePrUrl(submittedUrl ?? "");
+        const endpoint = mode === "agent" ? "/api/chat/agent" : "/api/chat/ask";
+
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: history, selectedFiles, prMeta }),
+        });
+
+        const reader = res.body!.getReader();
+        const decoder = new TextDecoder();
+        let accumulated = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value);
+          accumulated += chunk;
+
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantMsg.id
+                ? { ...m, content: accumulated.replace(/__TOOL__:\w+\n/g, "") }
+                : m,
+            ),
+          );
+        }
+      } finally {
+        setIsStreaming(false);
+      }
+    },
+    [messages, mode, selectedFiles, submittedUrl],
+  );
+
+  const clearMessages = () => setMessages([]);
+
+  return (
+    <ChatContext.Provider
+      value={{
+        messages,
+        mode,
+        setMode,
+        isStreaming,
+        sendMessage,
+        clearMessages,
+      }}
+    >
+      {children}
+    </ChatContext.Provider>
+  );
+};
+
+function parsePrUrl(url: string) {
+  const match = url.match(/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)/);
+  if (!match) return { owner: "", repo: "", pull_number: 0 };
+  return { owner: match[1], repo: match[2], pull_number: Number(match[3]) };
+}
+
+export const useChatContext = () => {
+  const ctx = useContext(ChatContext);
+  if (!ctx) throw new Error("useChatContext must be used within ChatProvider");
   return ctx;
 };

@@ -22,6 +22,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ChooseFileDialog } from "./choose-file-dialog";
 import { FileTabsRow } from "./file-tab-row";
+import { useChatContext } from "@/context/provider";
+import { ChatMode } from "@/types/chat";
 
 interface FileTab {
   id: string;
@@ -31,6 +33,7 @@ interface FileTab {
 export default function ChatInput() {
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { sendMessage, isStreaming, mode, setMode } = useChatContext();
 
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -39,11 +42,12 @@ export default function ChatInput() {
     textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
   }, [value]);
 
-  const handleSend = () => {
-    if (!value.trim()) return;
+  const handleSend = async () => {
+    if (!value.trim() || isStreaming) return;
+    const msg = value;
     setValue("");
+    await sendMessage(msg);
   };
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -77,7 +81,7 @@ export default function ChatInput() {
 
           <Separator orientation="vertical" className="h-4 mx-0.5" />
 
-          <Select defaultValue="ask">
+          <Select value={mode} onValueChange={(v) => setMode(v as ChatMode)}>
             <SelectTrigger className="h-7 w-auto gap-1 border-0 bg-transparent px-2 text-xs text-muted-foreground shadow-none hover:text-foreground focus:ring-0 focus:ring-offset-0">
               <SelectValue />
             </SelectTrigger>

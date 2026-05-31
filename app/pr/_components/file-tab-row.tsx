@@ -16,20 +16,24 @@ export const FileTabsRow = () => {
         const name = file.filename.split("/").slice(-1)[0];
 
         return (
-          <Badge
-            key={file.filename}
-            variant={isActive ? "default" : "outline"}
-            onClick={() => setActiveFile(file)}
-            className="cursor-pointer"
-          >
-            {name}
-            <X
-              onClick={(e) => {
-                e.stopPropagation();
-                removeFile(file);
-              }}
-            />
-          </Badge>
+          <div key={file.filename}>
+            <Badge
+              variant={isActive ? "default" : "outline"}
+              onClick={() => setActiveFile(file)}
+              className="cursor-pointer"
+            >
+              {name}
+              <X
+                size={12}
+                className="ml-1 cursor-pointer hover:opacity-70"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  removeFile(file);
+                }}
+              />
+            </Badge>
+          </div>
         );
       })}
     </>
