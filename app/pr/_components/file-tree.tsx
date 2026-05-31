@@ -97,12 +97,7 @@ export const FileTree = () => {
       </p>
     );
 
-  if (isLoadingFiles)
-    return (
-      <p className="text-sm text-muted-foreground animate-pulse">
-        Loading files...
-      </p>
-    );
+  if (isLoadingFiles) return <FileTreeSkeleton />;
 
   if (!files?.length)
     return <p className="text-sm text-muted-foreground">No files changed.</p>;
@@ -127,5 +122,50 @@ export const FileTree = () => {
     >
       {renderTree(treeData, files, setSelectedFile)}
     </Tree>
+  );
+};
+
+const FileTreeSkeleton = () => {
+  return (
+    <div className="space-y-1 p-2">
+      {/* Simulate folder + files structure */}
+      <div className="flex items-center gap-2 px-2 py-1">
+        <div className="h-4 w-4 rounded bg-muted-foreground/20 animate-pulse" />
+        <div className="h-3 w-24 rounded bg-muted-foreground/20 animate-pulse" />
+      </div>
+      {[60, 80, 48, 72, 56].map((w, i) => (
+        <div key={i} className="flex items-center gap-2 px-2 py-1 ml-4">
+          <div className="h-4 w-4 rounded bg-muted-foreground/20 animate-pulse" />
+          <div
+            className="h-3 rounded bg-muted-foreground/20 animate-pulse"
+            style={{ width: `${w}px` }}
+          />
+        </div>
+      ))}
+
+      <div className="flex items-center gap-2 px-2 py-1 mt-1">
+        <div className="h-4 w-4 rounded bg-muted-foreground/20 animate-pulse" />
+        <div className="h-3 w-32 rounded bg-muted-foreground/20 animate-pulse" />
+      </div>
+      {[52, 68].map((w, i) => (
+        <div key={i} className="flex items-center gap-2 px-2 py-1 ml-4">
+          <div className="h-4 w-4 rounded bg-muted-foreground/20 animate-pulse" />
+          <div
+            className="h-3 rounded bg-muted-foreground/20 animate-pulse"
+            style={{ width: `${w}px` }}
+          />
+        </div>
+      ))}
+
+      {[44, 76, 60].map((w, i) => (
+        <div key={i} className="flex items-center gap-2 px-2 py-1">
+          <div className="h-4 w-4 rounded bg-muted-foreground/20 animate-pulse" />
+          <div
+            className="h-3 rounded bg-muted-foreground/20 animate-pulse"
+            style={{ width: `${w}px` }}
+          />
+        </div>
+      ))}
+    </div>
   );
 };

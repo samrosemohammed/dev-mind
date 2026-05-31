@@ -1,13 +1,16 @@
 import ChatInput from "./chat-input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const Chat = () => {
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden">
       {/* Header — fixed height */}
-      <div className="p-4 border-b shrink-0">Chat 1</div>
+      <div className="shrink-0 border-b p-4">Chat 1</div>
 
       {/* Messages — grows to fill space, scrolls internally */}
-      <div className="flex-1 overflow-y-auto p-4">Message</div>
+      <ScrollArea className="min-h-0 flex-1">
+        <div className="p-4">Message</div>
+      </ScrollArea>
 
       {/* Input — sticks to bottom */}
       <ChatInput />

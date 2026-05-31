@@ -2,6 +2,7 @@
 import ReactDiffViewer from "react-diff-viewer-continued";
 import { parsePatch } from "@/lib/parse-patch";
 import { usePRContext } from "@/context/provider";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const Code = () => {
   const { selectedFile } = usePRContext();
@@ -16,21 +17,23 @@ export const Code = () => {
   const { oldCode, newCode } = parsePatch(selectedFile.patch ?? "");
 
   return (
-    <div className="">
-      <div className="px-4 py-2 bg-muted text-sm font-mono border-b">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden">
+      <div className="shrink-0 border-b bg-muted px-4 py-2 text-sm font-mono">
         {selectedFile.filename}
         <span className="ml-3 text-xs text-muted-foreground">
           <span className="text-green-500">+{selectedFile.additions}</span>{" "}
           <span className="text-red-500">-{selectedFile.deletions}</span>
         </span>
       </div>
-      <ReactDiffViewer
-        oldValue={oldCode}
-        newValue={newCode}
-        splitView={true}
-        leftTitle="Before"
-        rightTitle="After"
-      />
+      <ScrollArea className="min-h-0 flex-1">
+        <ReactDiffViewer
+          oldValue={oldCode}
+          newValue={newCode}
+          splitView={true}
+          leftTitle="Before"
+          rightTitle="After"
+        />
+      </ScrollArea>
     </div>
   );
 };
