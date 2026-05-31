@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { ChooseFileDialog } from "./choose-file-dialog";
+import { FileTabsRow } from "./file-tab-row";
 
 interface FileTab {
   id: string;
@@ -28,9 +30,6 @@ interface FileTab {
 
 export default function ChatInput() {
   const [value, setValue] = useState("");
-  const [tabs, setTabs] = useState<FileTab[]>([
-    { id: "1", name: "chat-input.tsx" },
-  ]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -52,34 +51,13 @@ export default function ChatInput() {
     }
   };
 
-  const removeTab = (id: string) => {
-    setTabs((prev) => prev.filter((t) => t.id !== id));
-  };
-
   return (
     <div className="p-4 border-t shrink-0">
       <div className="rounded-xl border bg-background shadow-sm focus-within:ring-1 focus-within:ring-ring overflow-hidden">
         {/* Top: file tabs row */}
-        {tabs.length > 0 && (
-          <div className="flex items-center gap-1.5 px-3 pt-2.5 pb-1 flex-wrap">
-            {tabs.map((tab) => (
-              <Badge
-                key={tab.id}
-                variant="secondary"
-                className="flex items-center gap-1 px-2 py-0.5 text-xs font-normal rounded-md"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
-                {tab.name}
-                <button
-                  onClick={() => removeTab(tab.id)}
-                  className="ml-0.5 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <X size={10} />
-                </button>
-              </Badge>
-            ))}
-          </div>
-        )}
+        <div className="flex items-center gap-1.5 px-3 pt-2.5 pb-1 flex-wrap">
+          <FileTabsRow />
+        </div>
 
         {/* Middle: textarea */}
         <Textarea
@@ -95,13 +73,7 @@ export default function ChatInput() {
         {/* Bottom toolbar */}
         <div className="flex items-center gap-1 px-2 pb-2 pt-1">
           {/* Left actions */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 text-muted-foreground hover:text-foreground"
-          >
-            <Plus size={15} />
-          </Button>
+          <ChooseFileDialog />
 
           <Separator orientation="vertical" className="h-4 mx-0.5" />
 

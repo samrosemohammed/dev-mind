@@ -23,15 +23,19 @@ interface PRContextType {
   isLoadingFiles: boolean;
   // reviewData: { review: string } | undefined;
   // isReviewing: boolean;
-  selectedFile: PRFile | null;
-  setSelectedFile: (file: PRFile) => void;
+  selectedFiles: PRFile[];
+  setSelectedFile: (file: PRFile) => void; // keep same name, change behavior
+  activeFile: PRFile | null;
+  setActiveFile: (file: PRFile) => void;
+  removeFile: (file: PRFile) => void;
 }
 
 const PRContext = createContext<PRContextType | null>(null);
 
 export const PRProvider = ({ children }: { children: ReactNode }) => {
   const [submittedUrl, setSubmittedUrl] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<PRFile | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<PRFile[]>([]);
+  const [activeFile, setActiveFile] = useState<PRFile | null>(null);
   const { data: files, isLoading: isLoadingFiles } = useQuery({
     queryKey: ["pr-diff", submittedUrl],
     queryFn: () =>
@@ -41,6 +45,26 @@ export const PRProvider = ({ children }: { children: ReactNode }) => {
     enabled: !!submittedUrl,
   });
 
+  const setSelectedFile = (file: PRFile) => {
+    setSelectedFiles((prev) => {
+      const exists = prev.find((f) => f.filename === file.filename);
+      if (exists) return prev; // already open, just activate
+      return [...prev, file];
+    });
+    setActiveFile(file); // always make clicked file active
+  };
+
+  const removeFile = (file: PRFile) => {
+    setSelectedFiles((prev) => {
+      const next = prev.filter((f) => f.filename !== file.filename);
+      // If we removed the active tab, activate the nearest one
+      if (activeFile?.filename === file.filename) {
+        const idx = prev.findIndex((f) => f.filename === file.filename);
+        setActiveFile(next[idx] ?? next[idx - 1] ?? null);
+      }
+      return next;
+    });
+  };
   // const { data: reviewData, isLoading: isReviewing } = useQuery({
   //   queryKey: ["pr-review", submittedUrl],
   //   queryFn: async () => {
@@ -64,8 +88,11 @@ export const PRProvider = ({ children }: { children: ReactNode }) => {
         isLoadingFiles,
         // reviewData,
         // isReviewing,
-        selectedFile,
+        selectedFiles,
         setSelectedFile,
+        activeFile,
+        setActiveFile,
+        removeFile,
       }}
     >
       {children}
