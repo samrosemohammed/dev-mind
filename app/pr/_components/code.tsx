@@ -2,7 +2,7 @@
 import ReactDiffViewer from "react-diff-viewer-continued";
 import { parsePatch } from "@/lib/parse-patch";
 import { usePRContext } from "@/context/provider";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { X } from "lucide-react";
 
 export const Code = () => {
@@ -20,31 +20,41 @@ export const Code = () => {
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
       {/* Tabs row */}
-      <div className="flex overflow-x-auto border-b bg-muted shrink-0">
-        {selectedFiles.map((file) => {
-          const isActive = file.filename === activeFile?.filename;
-          const name = file.filename.split("/").pop();
-          return (
-            <div
-              key={file.filename}
-              onClick={() => setActiveFile(file)}
-              className={`flex items-center gap-1.5 px-3 py-2 text-xs font-mono cursor-pointer border-r whitespace-nowrap
-                ${isActive ? "bg-background border-b-2 border-b-primary" : "hover:bg-muted-foreground/10 text-muted-foreground"}`}
-            >
-              {name}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeFile(file);
-                }}
-                className="hover:text-foreground ml-1"
+      <ScrollArea className="shrink-0">
+        <div className="flex border-b bg-muted shrink-0 min-w-max">
+          {selectedFiles.map((file) => {
+            const isActive = file.filename === activeFile?.filename;
+            const name = file.filename.split("/").pop();
+            return (
+              <div
+                key={file.filename}
+                onClick={() => setActiveFile(file)}
+                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-mono cursor-pointer border-r whitespace-nowrap
+                ${isActive ? "bg-background" : "hover:bg-muted-foreground/10 text-muted-foreground"}`}
               >
-                <X size={12} />
-              </button>
-            </div>
-          );
-        })}
-      </div>
+                {name}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeFile(file);
+                  }}
+                  className="hover:text-foreground ml-1"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            );
+          })}
+
+          <button
+            onClick={() => selectedFiles.forEach((file) => removeFile(file))}
+            className="px-3 py-2 text-xs text-muted-foreground hover:text-foreground whitespace-nowrap border-r"
+          >
+            Clear all
+          </button>
+        </div>
+        <ScrollBar className="cursor-pointer" orientation="horizontal" />
+      </ScrollArea>
 
       {/* Filename + stats bar */}
       {activeFile && (
