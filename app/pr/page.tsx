@@ -18,7 +18,7 @@ const PR = () => {
           {/* File tree — narrow */}
           <FileTree />
         </ResizablePanel>
-        {/* <ResizableHandle withHandle /> */}
+        <ResizableHandle />
         <ResizablePanel
           defaultSize={60}
           className="h-full min-h-0 overflow-hidden"
@@ -26,7 +26,7 @@ const PR = () => {
           {/* Code — wide */}
           <Code />
         </ResizablePanel>
-        {/* <ResizableHandle withHandle /> */}
+        <ResizableHandle />
         <ResizablePanel
           defaultSize={25}
           className="h-full min-h-0 overflow-hidden"
