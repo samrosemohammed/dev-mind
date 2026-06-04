@@ -13,22 +13,22 @@ const PR = () => {
       <ResizablePanelGroup className="h-full" orientation="horizontal">
         <ResizablePanel
           defaultSize={15}
-          className="h-full min-h-0 overflow-hidden p-2"
+          className="h-full min-h-0 overflow-hidden py-2"
         >
           {/* File tree — narrow */}
           <FileTree />
         </ResizablePanel>
-        <ResizableHandle withHandle />
+        {/* <ResizableHandle withHandle /> */}
         <ResizablePanel
-          defaultSize={65}
+          defaultSize={60}
           className="h-full min-h-0 overflow-hidden"
         >
           {/* Code — wide */}
           <Code />
         </ResizablePanel>
-        <ResizableHandle withHandle />
+        {/* <ResizableHandle withHandle /> */}
         <ResizablePanel
-          defaultSize={20}
+          defaultSize={25}
           className="h-full min-h-0 overflow-hidden"
         >
           {/* Chat — medium */}

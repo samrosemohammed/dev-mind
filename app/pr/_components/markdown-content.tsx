@@ -16,9 +16,7 @@ export const MarkdownContent = ({
   className?: string;
 }) => {
   return (
-    <div
-      className={cn("prose prose-sm dark:prose-invert max-w-none", className)}
-    >
+    <div className={cn("prose prose-sm dark:prose-invert max-w-sm", className)}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{

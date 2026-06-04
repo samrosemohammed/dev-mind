@@ -42,7 +42,7 @@ export const MessageBubble = ({ message, isStreaming }: Props) => {
 
       <div
         className={cn(
-          "max-w-[82%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
+          "rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
           isUser
             ? "rounded-br-sm bg-primary text-primary-foreground"
             : "rounded-bl-sm border bg-muted/50 text-foreground",

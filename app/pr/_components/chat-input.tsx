@@ -8,6 +8,8 @@ import {
   X,
   MessageCircle,
   BotMessageSquare,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,6 +26,7 @@ import { ChooseFileDialog } from "./choose-file-dialog";
 import { FileTabsRow } from "./file-tab-row";
 import { useChatContext } from "@/context/provider";
 import { ChatMode } from "@/types/chat";
+import { useTheme } from "next-themes";
 
 interface FileTab {
   id: string;
@@ -34,6 +37,7 @@ export default function ChatInput() {
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { sendMessage, isStreaming, mode, setMode } = useChatContext();
+  const { setTheme, resolvedTheme } = useTheme();
 
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -53,6 +57,10 @@ export default function ChatInput() {
       e.preventDefault();
       handleSend();
     }
+  };
+
+  const handleThemeToggle = () => {
+    setTheme(resolvedTheme === "light" ? "dark" : "light");
   };
 
   return (
@@ -79,7 +87,7 @@ export default function ChatInput() {
           {/* Left actions */}
           <ChooseFileDialog />
 
-          <Separator orientation="vertical" className="h-4 mx-0.5" />
+          <Separator orientation="vertical" className="h-4 mt-2 mx-0.5" />
 
           <Select value={mode} onValueChange={(v) => setMode(v as ChatMode)}>
             <SelectTrigger className="h-7 w-auto gap-1 border-0 bg-transparent px-2 text-xs text-muted-foreground shadow-none hover:text-foreground focus:ring-0 focus:ring-offset-0">
@@ -94,6 +102,16 @@ export default function ChatInput() {
               </SelectItem>
             </SelectContent>
           </Select>
+          <Separator orientation="vertical" className="h-4 mt-2 mx-0.5" />
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="cursor-pointer h-7 w-7 text-muted-foreground hover:text-foreground"
+            onClick={handleThemeToggle}
+          >
+            {resolvedTheme === "light" ? <Moon size={14} /> : <Sun size={14} />}
+          </Button>
 
           {/* Spacer */}
           <div className="flex-1" />

@@ -4,10 +4,12 @@ import { parsePatch } from "@/lib/parse-patch";
 import { usePRContext } from "@/context/provider";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { X } from "lucide-react";
+import { useTheme } from "next-themes";
 
 export const Code = () => {
   const { selectedFiles, activeFile, setActiveFile, removeFile } =
     usePRContext();
+  const { resolvedTheme } = useTheme();
 
   if (!selectedFiles.length)
     return (
@@ -38,7 +40,7 @@ export const Code = () => {
                     e.stopPropagation();
                     removeFile(file);
                   }}
-                  className="hover:text-foreground ml-1"
+                  className="hover:text-foreground ml-1 cursor-pointer text-muted-foreground"
                 >
                   <X size={12} />
                 </button>
@@ -48,7 +50,7 @@ export const Code = () => {
 
           <button
             onClick={() => selectedFiles.forEach((file) => removeFile(file))}
-            className="px-3 py-2 text-xs text-muted-foreground hover:text-foreground whitespace-nowrap border-r"
+            className="cursor-pointer px-3 py-2 text-xs text-muted-foreground hover:text-foreground whitespace-nowrap border-r"
           >
             Clear all
           </button>
@@ -74,6 +76,7 @@ export const Code = () => {
           splitView={true}
           leftTitle="Before"
           rightTitle="After"
+          useDarkTheme={resolvedTheme === "dark"}
         />
       </ScrollArea>
     </div>

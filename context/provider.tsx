@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PRFile } from "@/types/github";
 import { ChatMessage, ChatMode } from "@/types/chat";
 import { nanoid } from "nanoid";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 export const TanstackQueryProvider = ({
   children,
@@ -219,3 +220,10 @@ export const useChatContext = () => {
   if (!ctx) throw new Error("useChatContext must be used within ChatProvider");
   return ctx;
 };
+
+export function ThemeProvider({
+  children,
+  ...props
+}: React.ComponentProps<typeof NextThemesProvider>) {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+}
