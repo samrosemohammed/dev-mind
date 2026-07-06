@@ -1,6 +1,5 @@
 import { octokit } from "@/lib/github";
 import { NextRequest, NextResponse } from "next/server";
-import { GetResponseTypeFromEndpointMethod, Endpoints } from "@octokit/types";
 
 export const GET = async (req: NextRequest) => {
   const prUrl = req.nextUrl.searchParams.get("url");

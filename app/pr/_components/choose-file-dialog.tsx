@@ -8,12 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-  Field,
-} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { usePRContext } from "@/context/provider";
 import { searchFile } from "@/schemas/pr";
@@ -22,7 +16,7 @@ import { Plus, FileCode, Search } from "lucide-react";
 import { useState, useMemo } from "react";
 
 export const ChooseFileDialog = () => {
-  const { files, isLoadingFiles, submittedUrl } = usePRContext();
+  const { files } = usePRContext();
   const [query, setQuery] = useState("");
 
   const filteredFiles = useMemo(() => {

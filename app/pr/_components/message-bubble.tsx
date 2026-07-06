@@ -50,7 +50,7 @@ export const MessageBubble = ({ message, isStreaming }: Props) => {
       >
         {isUser ? (
           // User messages are plain text — no markdown needed
-          <p className="whitespace-pre-wrap break-words">{text}</p>
+          <p className="whitespace-pre-wrap wrap-break-word">{text}</p>
         ) : (
           // Assistant messages render markdown
           <div className="relative">

@@ -14,6 +14,8 @@ export const Code = () => {
   const { selectedFiles, activeFile, setActiveFile, removeFile } =
     usePRContext();
   const [editMode, setEditMode] = useState(false);
+  const [agentMode, setAgentMode] = useState(false);
+
   const { resolvedTheme } = useTheme();
   if (!selectedFiles.length)
     return (
@@ -76,18 +78,35 @@ export const Code = () => {
             <Button
               className="text-xs cursor-pointer"
               size="sm"
-              onClick={() => setEditMode(false)}
-              variant={editMode ? "outline" : "default"}
+              onClick={() => {
+                setEditMode(false);
+                setAgentMode(false);
+              }}
+              variant={editMode || agentMode ? "outline" : "default"}
             >
               Diff
             </Button>
             <Button
               className="text-xs cursor-pointer"
               size="sm"
-              onClick={() => setEditMode(true)}
-              variant={!editMode ? "outline" : "default"}
+              onClick={() => {
+                setEditMode(true);
+                setAgentMode(false);
+              }}
+              variant={!editMode || agentMode ? "outline" : "default"}
             >
               Edit
+            </Button>
+            <Button
+              variant={!agentMode || editMode ? "outline" : "default"}
+              onClick={() => {
+                setAgentMode(true);
+                setEditMode(false);
+              }}
+              className="text-xs cursor-pointer"
+              size="sm"
+            >
+              Agent
             </Button>
           </ButtonGroup>
         </div>
@@ -99,7 +118,15 @@ export const Code = () => {
             key={`${activeFile?.filename ?? "empty"}:${activeFile?.patch ?? ""}`}
             value={newCode}
             filename={activeFile?.filename}
-            readOnly
+            // readOnly
+            minHeight="calc(100vh - 120px)"
+          />
+        ) : agentMode ? (
+          <CodeEditor
+            key={`${activeFile?.filename ?? "empty"}:${activeFile?.patch ?? ""}`}
+            value={newCode}
+            filename={activeFile?.filename}
+            // readOnly
             minHeight="calc(100vh - 120px)"
           />
         ) : (

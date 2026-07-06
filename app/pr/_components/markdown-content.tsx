@@ -15,6 +15,7 @@ export const MarkdownContent = ({
   content: string;
   className?: string;
 }) => {
+  const { resolvedTheme } = useTheme();
   return (
     <div className={cn("prose prose-sm dark:prose-invert max-w-sm", className)}>
       <ReactMarkdown
@@ -24,7 +25,6 @@ export const MarkdownContent = ({
           code({ className, children }) {
             const isInline = !className;
             const language = className?.replace("language-", "") ?? "text";
-            const { resolvedTheme } = useTheme();
 
             if (isInline) {
               return (

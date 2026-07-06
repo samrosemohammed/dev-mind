@@ -1,11 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import {
-  Plus,
-  Zap,
-  SlidersHorizontal,
   ArrowUp,
-  X,
   MessageCircle,
   BotMessageSquare,
   Moon,
@@ -20,18 +16,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ChooseFileDialog } from "./choose-file-dialog";
 import { FileTabsRow } from "./file-tab-row";
 import { useChatContext } from "@/context/provider";
 import { ChatMode } from "@/types/chat";
 import { useTheme } from "next-themes";
-
-interface FileTab {
-  id: string;
-  name: string;
-}
 
 export default function ChatInput() {
   const [value, setValue] = useState("");
