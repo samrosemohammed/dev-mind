@@ -1,10 +1,11 @@
 import { groq } from "@/lib/groq";
 import { NextRequest, NextResponse } from "next/server";
 import { PRFile } from "@/types/github";
+import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
 
 export const POST = async (req: NextRequest) => {
   const { messages, selectedFiles } = (await req.json()) as {
-    messages: { role: string; content: string }[];
+    messages: ChatCompletionMessageParam[];
     selectedFiles: PRFile[];
   };
 
