@@ -19,6 +19,7 @@ import { useForm } from "@tanstack/react-form";
 import { PRSchema } from "@/schemas/pr";
 import { usePRContext } from "@/context/provider";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 export const PR = () => {
   const { setSubmittedUrl } = usePRContext();
@@ -86,7 +87,14 @@ export const PR = () => {
           >
             Reset
           </Button>
-          <Button type="submit" form="github-pr-url">
+          <Button
+            disabled={form.state.isSubmitting}
+            type="submit"
+            form="github-pr-url"
+          >
+            {form.state.isSubmitting ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : null}
             Submit
           </Button>
         </Field>
