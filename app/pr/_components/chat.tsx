@@ -15,7 +15,7 @@ export const Chat = () => {
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="shrink-0 border-b p-4">Chat 1</div>
+      <div className="shrink-0 border-b p-4">Assistant</div>
 
       <ScrollArea className="min-h-0 flex-1">
         <div className="flex flex-col gap-2 p-4">

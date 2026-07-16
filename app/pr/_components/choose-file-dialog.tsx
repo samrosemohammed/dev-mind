@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { usePRContext } from "@/context/provider";
 import { searchFile } from "@/schemas/pr";
 import { useForm } from "@tanstack/react-form";
@@ -79,58 +80,59 @@ export const ChooseFileDialog = () => {
             </div>
 
             {/* Results list */}
-            <div className="flex flex-col max-h-72 overflow-y-auto rounded-md border divide-y">
-              {filteredFiles.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-6">
-                  No files match &ldquo;{query}&rdquo;
-                </p>
-              ) : (
-                filteredFiles.map((file) => {
-                  const parts = file.filename.split("/");
-                  const name = parts.pop()!;
-                  const dir = parts.join("/");
+            <ScrollArea className="max-h-72">
+              <div className="flex flex-col rounded-md border divide-y">
+                {filteredFiles.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-6">
+                    No files match &ldquo;{query}&rdquo;
+                  </p>
+                ) : (
+                  filteredFiles.map((file) => {
+                    const parts = file.filename.split("/");
+                    const name = parts.pop()!;
+                    const dir = parts.join("/");
 
-                  return (
-                    <button
-                      key={file.sha}
-                      type="button"
-                      onClick={() => {
-                        // TODO: handle file selection
-                        console.log("Selected file:", file);
-                      }}
-                      className="flex items-center gap-3 px-3 py-2.5 text-left hover:bg-muted/50 transition-colors group"
-                    >
-                      <FileCode
-                        size={14}
-                        className="shrink-0 text-muted-foreground group-hover:text-foreground transition-colors"
-                      />
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-sm font-medium truncate leading-tight">
-                          {name}
-                        </span>
-                        {dir && (
-                          <span className="text-xs text-muted-foreground truncate leading-tight">
-                            {dir}
-                          </span>
-                        )}
-                      </div>
-                      <span
-                        className={`ml-auto text-xs shrink-0 px-1.5 py-0.5 rounded font-mono ${
-                          file.status === "added"
-                            ? "bg-green-500/10 text-green-600"
-                            : file.status === "removed"
-                              ? "bg-red-500/10 text-red-600"
-                              : "bg-yellow-500/10 text-yellow-600"
-                        }`}
+                    return (
+                      <button
+                        key={file.sha}
+                        type="button"
+                        onClick={() => {
+                          // TODO: handle file selection
+                          console.log("Selected file:", file);
+                        }}
+                        className="flex items-center gap-3 px-3 py-2.5 text-left hover:bg-muted/50 transition-colors group"
                       >
-                        {file.status}
-                      </span>
-                    </button>
-                  );
-                })
-              )}
-            </div>
-
+                        <FileCode
+                          size={14}
+                          className="shrink-0 text-muted-foreground group-hover:text-foreground transition-colors"
+                        />
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-sm font-medium truncate leading-tight">
+                            {name}
+                          </span>
+                          {dir && (
+                            <span className="text-xs text-muted-foreground truncate leading-tight">
+                              {dir}
+                            </span>
+                          )}
+                        </div>
+                        <span
+                          className={`ml-auto text-xs shrink-0 px-1.5 py-0.5 rounded font-mono ${
+                            file.status === "added"
+                              ? "bg-green-500/10 text-green-600"
+                              : file.status === "removed"
+                                ? "bg-red-500/10 text-red-600"
+                                : "bg-yellow-500/10 text-yellow-600"
+                          }`}
+                        >
+                          {file.status}
+                        </span>
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            </ScrollArea>
             {/* Footer count */}
             <p className="text-xs text-muted-foreground">
               {filteredFiles.length} of {files.length} file

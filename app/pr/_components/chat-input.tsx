@@ -1,32 +1,18 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import {
-  ArrowUp,
-  MessageCircle,
-  BotMessageSquare,
-  Moon,
-  Sun,
-} from "lucide-react";
+import { ArrowUp, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { ChooseFileDialog } from "./choose-file-dialog";
 import { FileTabsRow } from "./file-tab-row";
 import { useChatContext } from "@/context/provider";
-import { ChatMode } from "@/types/chat";
 import { useTheme } from "next-themes";
 
 export default function ChatInput() {
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { sendMessage, isStreaming, mode, setMode } = useChatContext();
+  const { sendMessage, isStreaming } = useChatContext();
   const { setTheme, resolvedTheme } = useTheme();
 
   useEffect(() => {
@@ -77,21 +63,6 @@ export default function ChatInput() {
           {/* Left actions */}
           <ChooseFileDialog />
 
-          <Separator orientation="vertical" className="h-4 mt-2 mx-0.5" />
-
-          <Select value={mode} onValueChange={(v) => setMode(v as ChatMode)}>
-            <SelectTrigger className="h-7 w-auto gap-1 border-0 bg-transparent px-2 text-xs text-muted-foreground shadow-none hover:text-foreground focus:ring-0 focus:ring-offset-0">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ask" className="text-xs">
-                <MessageCircle /> Ask
-              </SelectItem>
-              <SelectItem value="agent" className="text-xs">
-                <BotMessageSquare /> Agent
-              </SelectItem>
-            </SelectContent>
-          </Select>
           <Separator orientation="vertical" className="h-4 mt-2 mx-0.5" />
 
           <Button

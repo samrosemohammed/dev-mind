@@ -9,6 +9,8 @@ export const POST = async (req: NextRequest) => {
     selectedFiles: PRFile[];
   };
 
+  console.log("Selected files:", selectedFiles);
+
   const fileContext = selectedFiles
     .map(
       (f) => `### ${f.filename}\n\`\`\`diff\n${f.patch ?? "(binary)"}\n\`\`\``,

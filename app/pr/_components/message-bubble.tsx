@@ -27,6 +27,7 @@ const TOOL_LABELS: Record<string, string> = {
 export const MessageBubble = ({ message, isStreaming }: Props) => {
   const isUser = message.role === "user";
   const { text, toolCalls } = parseContent(message.content);
+  console.log("MessageBubble render:", { text, toolCalls, isStreaming });
 
   return (
     <div

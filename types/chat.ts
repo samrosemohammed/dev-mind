@@ -1,4 +1,3 @@
-export type ChatMode = "ask" | "agent";
 export type MessageRole = "user" | "assistant" | "tool";
 
 export interface ChatMessage {
@@ -13,5 +12,4 @@ export interface ChatMessage {
 export interface ChatState {
   messages: ChatMessage[];
   isStreaming: boolean;
-  mode: ChatMode;
 }
