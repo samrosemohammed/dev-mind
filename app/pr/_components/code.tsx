@@ -5,17 +5,10 @@ import { usePRContext } from "@/context/provider";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { X } from "lucide-react";
 import { useTheme } from "next-themes";
-import { CodeEditor } from "./code-editor";
-import { ButtonGroup } from "@/components/ui/button-group";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
 
 export const Code = () => {
   const { selectedFiles, activeFile, setActiveFile, removeFile } =
     usePRContext();
-  const [editMode, setEditMode] = useState(false);
-  const [agentMode, setAgentMode] = useState(false);
-
   const { resolvedTheme } = useTheme();
   if (!selectedFiles.length)
     return (
@@ -74,72 +67,19 @@ export const Code = () => {
               <span className="text-red-500">-{activeFile.deletions}</span>
             </span>
           </div>
-          <ButtonGroup aria-label="Button group">
-            <Button
-              className="text-xs cursor-pointer"
-              size="sm"
-              onClick={() => {
-                setEditMode(false);
-                setAgentMode(false);
-              }}
-              variant={editMode || agentMode ? "outline" : "default"}
-            >
-              Diff
-            </Button>
-            <Button
-              className="text-xs cursor-pointer"
-              size="sm"
-              onClick={() => {
-                setEditMode(true);
-                setAgentMode(false);
-              }}
-              variant={!editMode || agentMode ? "outline" : "default"}
-            >
-              Edit
-            </Button>
-            <Button
-              variant={!agentMode || editMode ? "outline" : "default"}
-              onClick={() => {
-                setAgentMode(true);
-                setEditMode(false);
-              }}
-              className="text-xs cursor-pointer"
-              size="sm"
-            >
-              Agent
-            </Button>
-          </ButtonGroup>
         </div>
       )}
 
       <ScrollArea className="min-h-0 flex-1">
-        {editMode ? (
-          <CodeEditor
-            key={`${activeFile?.filename ?? "empty"}:${activeFile?.patch ?? ""}`}
-            value={newCode}
-            filename={activeFile?.filename}
-            // readOnly
-            minHeight="calc(100vh - 120px)"
-          />
-        ) : agentMode ? (
-          <CodeEditor
-            key={`${activeFile?.filename ?? "empty"}:${activeFile?.patch ?? ""}`}
-            value={newCode}
-            filename={activeFile?.filename}
-            // readOnly
-            minHeight="calc(100vh - 120px)"
-          />
-        ) : (
-          <ReactDiffViewer
-            key={`${activeFile?.filename ?? "empty"}:${activeFile?.patch ?? ""}`}
-            oldValue={oldCode}
-            newValue={newCode}
-            splitView={true}
-            leftTitle="Before"
-            rightTitle="After"
-            useDarkTheme={resolvedTheme === "dark"}
-          />
-        )}
+        <ReactDiffViewer
+          key={`${activeFile?.filename ?? "empty"}:${activeFile?.patch ?? ""}`}
+          oldValue={oldCode}
+          newValue={newCode}
+          splitView={true}
+          leftTitle="Before"
+          rightTitle="After"
+          useDarkTheme={resolvedTheme === "dark"}
+        />
       </ScrollArea>
     </div>
   );

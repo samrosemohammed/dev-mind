@@ -10,7 +10,7 @@ import {
 } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PRFile } from "@/types/github";
-import { ChatMessage, ChatMode } from "@/types/chat";
+import { ChatMessage } from "@/types/chat";
 import { nanoid } from "nanoid";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
@@ -52,6 +52,13 @@ export const PRProvider = ({ children }: { children: ReactNode }) => {
         `/api/github/pr/diff?url=${encodeURIComponent(submittedUrl!)}`,
       ).then((r) => r.json()),
     enabled: !!submittedUrl,
+  });
+
+  console.log("PRProvider render:", {
+    submittedUrl,
+    files,
+    selectedFiles,
+    activeFile,
   });
 
   const setSelectedFile = (file: PRFile) => {
@@ -117,8 +124,6 @@ export const usePRContext = () => {
 
 interface ChatContextType {
   messages: ChatMessage[];
-  mode: ChatMode;
-  setMode: (m: ChatMode) => void;
   isStreaming: boolean;
   sendMessage: (content: string) => Promise<void>;
   clearMessages: () => void;
@@ -128,7 +133,6 @@ const ChatContext = createContext<ChatContextType | null>(null);
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [mode, setMode] = useState<ChatMode>("ask");
   const [isStreaming, setIsStreaming] = useState(false);
   const { selectedFiles, submittedUrl } = usePRContext();
 
@@ -158,7 +162,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }));
 
         const prMeta = parsePrUrl(submittedUrl ?? "");
-        const endpoint = mode === "agent" ? "/api/chat/agent" : "/api/chat/ask";
+        const endpoint = "/api/chat/ask"; // Default to ask mode
 
         const res = await fetch(endpoint, {
           method: "POST",
@@ -179,7 +183,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           setMessages((prev) =>
             prev.map((m) =>
               m.id === assistantMsg.id
-                ? { ...m, content: accumulated.replace(/__TOOL__:\w+\n/g, "") }
+                ? { ...m, content: accumulated } // keep raw markers
                 : m,
             ),
           );
@@ -188,7 +192,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         setIsStreaming(false);
       }
     },
-    [messages, mode, selectedFiles, submittedUrl],
+    [messages, selectedFiles, submittedUrl],
   );
 
   const clearMessages = () => setMessages([]);
@@ -197,8 +201,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     <ChatContext.Provider
       value={{
         messages,
-        mode,
-        setMode,
         isStreaming,
         sendMessage,
         clearMessages,
