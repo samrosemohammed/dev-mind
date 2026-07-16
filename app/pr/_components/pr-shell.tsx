@@ -13,7 +13,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { usePRContext, useChatContext } from "@/context/provider";
+import { useChatContext } from "@/context/provider";
 import { PanelLeft, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FileTree } from "./file-tree";
@@ -37,12 +37,7 @@ function useIsMobile(breakpoint = 768) {
 function MobileLayout() {
   const [fileTreeOpen, setFileTreeOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-  const { activeFile } = usePRContext();
   const { isStreaming } = useChatContext();
-
-  useEffect(() => {
-    if (activeFile) setFileTreeOpen(false);
-  }, [activeFile?.filename]);
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden">
@@ -56,7 +51,7 @@ function MobileLayout() {
           <SheetContent side="left" className="w-72 p-0">
             <SheetTitle className="sr-only">File tree</SheetTitle>
             <div className="h-full min-h-0 overflow-y-auto px-1 py-2">
-              <FileTree />
+              <FileTree onSelectFile={() => setFileTreeOpen(false)} />
             </div>
           </SheetContent>
         </Sheet>

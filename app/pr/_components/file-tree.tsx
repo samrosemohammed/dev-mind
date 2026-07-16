@@ -60,7 +60,8 @@ const statusColor: Record<string, string> = {
 const renderTree = (
   elements: TreeViewElement[],
   files: PRFile[],
-  setSelectedFile: (file: PRFile) => void, // add param
+  setSelectedFile: (file: PRFile) => void,
+  onSelectFile?: (file: PRFile) => void,
 ) => {
   return elements.map((el) => {
     if (el.type === "folder") {
@@ -78,7 +79,11 @@ const renderTree = (
       <File
         key={el.id}
         value={el.id}
-        onClick={() => fileData && setSelectedFile(fileData)} // add this
+        onClick={() => {
+          if (!fileData) return;
+          setSelectedFile(fileData);
+          onSelectFile?.(fileData);
+        }}
       >
         <span className={colorClass}>{el.name}</span>
       </File>
@@ -86,7 +91,11 @@ const renderTree = (
   });
 };
 
-export const FileTree = () => {
+export const FileTree = ({
+  onSelectFile,
+}: {
+  onSelectFile?: (file: PRFile) => void;
+}) => {
   const { files, isLoadingFiles, submittedUrl, setSelectedFile } =
     usePRContext();
 
@@ -120,7 +129,7 @@ export const FileTree = () => {
       initialExpandedItems={[...new Set(allFolderIds)]}
       elements={treeData}
     >
-      {renderTree(treeData, files, setSelectedFile)}
+      {renderTree(treeData, files, setSelectedFile, onSelectFile)}
     </Tree>
   );
 };
